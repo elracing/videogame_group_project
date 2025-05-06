@@ -23,11 +23,11 @@ public class Game extends GameBase{
 				player.go_RT(5);
 			}
 			
-			if(pressing[_F] && (player.current_pose == Sprite.RT))   {
+			if(pressing[_F] && (player.current_pose == Sprite.RT))   { //press f to attack, right side position
 				player.attack_RT();
 			}
 			
-			if(pressing[_F] && (player.current_pose == Sprite.LT))   {
+			if(pressing[_F] && (player.current_pose == Sprite.LT))   {//press f to attack, left side position
 				player.attack_LT();
 			}
 			
@@ -44,7 +44,7 @@ public class Game extends GameBase{
 	public void paint (Graphics pen) {
 
 		
-		player.draw(pen);			
+		player.draw(pen);	//draw player here		
 		
 	}
 	public void initialize() {
