@@ -10,6 +10,8 @@ public class Rect {
 	int old_x;
 	int old_y;
 	
+	public int yVelocity = 0; // vertical speed
+	
 	
 	//flags to detect auto-movement
 	boolean moving_up = false;
@@ -131,6 +133,11 @@ public class Rect {
     public boolean contains(int mx, int my) {
         return mx > this.x && mx < this.x + this.w && my > this.y && my < this.y + this.h;
     }
+    
+	public void updatePosition() { //changes y based on velocity
+	    y += yVelocity;
+	}
+	
     
     public void draw(Graphics pen) {
         pen.drawRect(this.x, this.y, this.w, this.h);

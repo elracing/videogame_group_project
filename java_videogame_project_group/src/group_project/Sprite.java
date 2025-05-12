@@ -9,6 +9,7 @@ public class Sprite extends Rect{
 		
 		boolean moving = false; //for moving
 		boolean attacking = false; //for attacking, which will prevent moving
+		boolean jumping = false; //detects jumping
 		
 		//array indexes for poses
 		final public static int LT = 0;
@@ -17,6 +18,8 @@ public class Sprite extends Rect{
 		final public static int attack_RT = 3;
 		final public static int hurt_LT = 4;
 		final public static int hurt_RT = 5;
+		final public static int jump_LT = 6;
+		final public static int jump_RT = 7;
 		
 		
 		int current_pose = RT;
@@ -55,17 +58,36 @@ public class Sprite extends Rect{
 				
 			}
 			//movement without attacking
-			if(moving && !attacking) {
+			if(moving && !attacking &&  !jumping) {
 				pen.drawImage(animation[current_pose].nextImage(), x, y, w, h, null);
 
 			}
 			
 			//standing still without attacking
-			if (!moving & !attacking) {
+			if (!moving & !attacking && !jumping) {
 				pen.drawImage(animation[current_pose].stillImage(), x, y, w, h,  null);
 				
 				moving = false;
 			}
+			
+			if (jumping && current_pose == LT) {
+				pen.drawImage(animation[jump_LT].nextImage(), x, y, w, h,  null);
+				if(Animation.current ==14) {
+					Animation.current = 4;
+				}
+				
+		
+			}
+			
+			if (jumping && current_pose == RT) {
+				pen.drawImage(animation[jump_RT].nextImage(), x, y, w, h,  null);
+				if(Animation.current ==14) {
+					Animation.current = 4;
+				}
+			}
+			
+			
+			
 			
 		}
 		
@@ -105,6 +127,20 @@ public class Sprite extends Rect{
 			
 			moving = false;
 			attacking = true;
+			current_pose = LT;
+		}
+		
+		public void jump_RT() {
+			jumping = true;
+			moving = false;
+			attacking = false;
+			current_pose = RT;
+		}
+		
+		public void jump_LT() {
+			jumping = true;
+			moving = false;
+			attacking = false;
 			current_pose = LT;
 		}
 		
