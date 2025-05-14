@@ -119,5 +119,9 @@ public abstract class GameBase extends Applet implements Runnable, KeyListener {
 
     public void keyTyped(KeyEvent e) {
     }
+    
+    public Image getImage(String filename) {
+    	return Toolkit.getDefaultToolkit().getImage(filename);
+    }
 }
 
