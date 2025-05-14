@@ -24,18 +24,17 @@ public class Game extends GameBase{
 			"............................AA........",
 			".........................AAAAA........",
 			"....................D.AAAA............",
-			".............AAAAAAAAAAAAAAA..........",
-			"...AA......AA.........................",
+			"..................AAAAAAAAAAAAAAA.....",
+			"...AA..........AA.....................",
 			".....AA...............................",
 			".......AA.............................",
 			"...AAAAAAAAAAAA.......................",
 			"................AAAA..................",
 			"....................AA................",
 			"......................................",
-			"......E.AA..............AFAAA...........I..I...I.",
+			"......E.AA................AFAAA...........I..I..",
 			"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBBBBBBBBBB"
 		};
-	
 	
 	Player player = new Player(0, 0); //make player
 	ArrayList<Enemy> enemies = new ArrayList<>(); //add your enemies to this list, you can control behavior as a whole this way
