@@ -22,7 +22,7 @@ public class Player extends Sprite{
 	//constructor
 	
 	public Player(int x, int y) {
-		super("player" , x, y, 200, 200 , pose, 15, 1); //constructor for player
+		super("player" , x, y, 32, 32 , pose, 15, 1); //constructor for player
 	}
 
 }
