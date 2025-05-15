@@ -287,6 +287,7 @@ public class Game extends GameBase{
 				
 				if (enemy.health <= 0) { //"kills" the enemy when health is 0 safety (no need to worry about nulls)
 					iter.remove();
+					enemiesDefeated++;
 				}
 			}
 			

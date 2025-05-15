@@ -3,6 +3,7 @@ package group_project;
 import java.applet.Applet;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.ImageObserver;

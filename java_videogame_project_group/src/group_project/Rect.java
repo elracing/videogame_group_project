@@ -138,6 +138,7 @@ public class Rect {
 	    y += yVelocity;
 	}
 	
+	
     
     public void draw(Graphics pen) {
         pen.drawRect(this.x, this.y, this.w, this.h);
