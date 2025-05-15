@@ -13,8 +13,13 @@ import javax.imageio.ImageIO;
 
 
 
+
+
 public class Game extends GameBase{
 	public static final int S = 32;
+	int enemiesDefeated = 0; //tracks enemies killed
+	int killThreshold = 10; //number needed to reach in order to trigger key spawn
+	
 	String[][] map = {
 			{
 			//level 1
@@ -261,7 +266,7 @@ public class Game extends GameBase{
 
 	        if (bottomY >= 0 && bottomY < currmap.length && centerX >= 0 && centerX < currmap[bottomY].length()) {
 	            char tile = currmap[bottomY].charAt(centerX);
-	            if (tile == 'G') loadNextLevel();
+	            if (tile == 'G' && enemiesDefeated >= killThreshold) loadNextLevel();
 	        }
 
 			
@@ -310,7 +315,7 @@ public class Game extends GameBase{
 				if (c == 'E')pen.drawImage(image6, S * col, S * row, S, S, null);
 				if (c == 'F')pen.drawImage(image7, S * col, S * row, S, S, null);
 				if (c == 'I')pen.drawImage(image10, S * col, S * row, S, S, null);
-				if (c == 'G' && key[keyFrameIndex] != null) pen.drawImage(key[keyFrameIndex], S * col, S * row, S, S, null);
+				if (c == 'G' && key[keyFrameIndex] != null && enemiesDefeated >= killThreshold) pen.drawImage(key[keyFrameIndex], S * col, S * row, S, S, null);
 				if (c == 'J')pen.drawImage(image11, S * col, S * row, S, S, null);
 				if (c == 'K')pen.drawImage(image12, S * col, S * row, S, S, null);
 				if (c == 'L')pen.drawImage(image13, S * col, S * row, S, S, null);
