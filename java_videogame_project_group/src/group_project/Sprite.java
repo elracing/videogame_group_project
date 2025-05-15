@@ -44,14 +44,14 @@ public class Sprite extends Rect{
 		public void draw(Graphics pen) {
 			//if attacking, lock into attack pose and free on last frame, right side
 			if(attacking && current_pose == RT) {
-				pen.drawImage(animation[attack_RT].nextImage(), x, y, w, h, null); 
+				pen.drawImage(animation[attack_RT].nextImage(), x, y, w, h  + 20, null); 
 				if(Animation.current == 14) {
 					attacking = false;
 				}
 			}
 			//if attacking, lock into attack pose and free on last frame, left side
 			if(attacking && current_pose == LT) {
-				pen.drawImage(animation[attack_LT].nextImage(), x, y, w, h, null); 
+				pen.drawImage(animation[attack_LT].nextImage(), x, y, w, h  + 20, null); 
 				if(Animation.current == 14) {
 					attacking = false;
 				}
@@ -59,19 +59,19 @@ public class Sprite extends Rect{
 			}
 			//movement without attacking
 			if(moving && !attacking &&  !jumping) {
-				pen.drawImage(animation[current_pose].nextImage(), x, y, w, h, null);
+				pen.drawImage(animation[current_pose].nextImage(), x, y, w, h  + 20, null);
 
 			}
 			
 			//standing still without attacking
 			if (!moving & !attacking && !jumping) {
-				pen.drawImage(animation[current_pose].stillImage(), x, y, w, h,  null);
+				pen.drawImage(animation[current_pose].stillImage(), x, y, w, h + 20,  null);
 				
 				moving = false;
 			}
 			
 			if (jumping && current_pose == LT) {
-				pen.drawImage(animation[jump_LT].nextImage(), x, y, w, h,  null);
+				pen.drawImage(animation[jump_LT].nextImage(), x, y, w, h  + 20,  null);
 				if(Animation.current ==14) {
 					Animation.current = 4;
 				}
