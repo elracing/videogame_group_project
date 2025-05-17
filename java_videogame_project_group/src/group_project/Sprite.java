@@ -171,12 +171,12 @@ public class Sprite extends Rect{
     	
         
         if ((dead) && current_pose == LT) { //loop back to 12, adds a bit of flashing
-            pen.drawImage(animation[death_LT].nextImage(), x, y, w, h, null);
+            pen.drawImage(animation[death_LT].nextImage(), x, y + 10, w + 20, h, null);
             if(animation[death_LT].current == 14) animation[death_LT].current = 12;
         }
         
         if ((dead) && current_pose == RT) { 
-            pen.drawImage(animation[death_RT].nextImage(), x, y, w, h, null);
+            pen.drawImage(animation[death_RT].nextImage(), x, y + 10, w + 20, h, null);
             if(animation[death_RT].current == 14) animation[death_RT].current = 12;
         }
         
