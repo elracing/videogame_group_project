@@ -1,151 +1,204 @@
+/*package group_project;
+
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+
+public class Sprite extends Rect{
+
+	Animation[] animation;
+	boolean moving = false;
+	boolean attacking = false;
+	boolean jumping = false;
+
+	final public static int LT = 0;
+	final public static int RT = 1;
+	final public static int attack_LT = 2;
+	final public static int attack_RT = 3;
+	final public static int hurt_LT = 4;
+	final public static int hurt_RT = 5;
+	final public static int jump_LT = 6;
+	final public static int jump_RT = 7;
+
+	int current_pose = RT;
+
+	public Sprite (String name, int x, int y, int w, int h, String[] pose, int count, int duration) {
+		super(x, y, w ,h);
+		animation = new Animation[pose.length];
+		for(int i = 0; i < pose.length; i++) {
+			animation[i] = new Animation(name + "_" + pose[i], count, duration);
+		}
+	}
+
+	public void draw(Graphics pen) {
+		if(attacking && current_pose == RT) {
+			pen.drawImage(animation[attack_RT].nextImage(), x, y, w, h + 20, null);
+			if(Animation.current == 14) attacking = false;
+		}
+		if(attacking && current_pose == LT) {
+			pen.drawImage(animation[attack_LT].nextImage(), x, y, w, h + 20, null);
+			if(Animation.current == 14) attacking = false;
+		}
+		if(moving && !attacking && !jumping) {
+			pen.drawImage(animation[current_pose].nextImage(), x, y, w, h + 20, null);
+		}
+		if (!moving & !attacking && !jumping) {
+			pen.drawImage(animation[current_pose].stillImage(), x, y, w, h + 20, null);
+			moving = false;
+		}
+		if (jumping && current_pose == LT) {
+			pen.drawImage(animation[jump_LT].nextImage(), x, y, w, h + 20, null);
+			if(Animation.current == 14) Animation.current = 4;
+		}
+		if (jumping && current_pose == RT) {
+			pen.drawImage(animation[jump_RT].nextImage(), x, y, w, h, null);
+			if(Animation.current == 14) Animation.current = 4;
+		}
+	}
+
+	public void go_LT(int dx) {
+		old_x = x;
+		x -= dx;
+		moving = true;
+		current_pose = LT;
+	}
+
+	public void go_RT(int dx) {
+		old_x = x;
+		x += dx;
+		moving = true;
+		current_pose = RT;
+	}
+
+	public void attack_RT() {
+		moving = false;
+		attacking = true;
+		current_pose = RT;
+	}
+
+	public void attack_LT() {
+		moving = false;
+		attacking = true;
+		current_pose = LT;
+	}
+
+	public void jump_RT() {
+		jumping = true;
+		moving = false;
+		attacking = false;
+		current_pose = RT;
+	}
+
+	public void jump_LT() {
+		jumping = true;
+		moving = false;
+		attacking = false;
+		current_pose = LT;
+	}
+
+
+}
+*/
 package group_project;
 
 import java.awt.Graphics;
-
+import java.awt.Image;
 
 public class Sprite extends Rect{
-	
-		Animation[] animation;
-		
-		boolean moving = false; //for moving
-		boolean attacking = false; //for attacking, which will prevent moving
-		boolean jumping = false; //detects jumping
-		
-		//array indexes for poses
-		final public static int LT = 0;
-		final public static int RT = 1;
-		final public static int attack_LT = 2;
-		final public static int attack_RT = 3;
-		final public static int hurt_LT = 4;
-		final public static int hurt_RT = 5;
-		final public static int jump_LT = 6;
-		final public static int jump_RT = 7;
-		
-		
-		int current_pose = RT;
-		
-		
-		public Sprite (String name, int x, int y, int w, int h, String[] pose, int count, int duration) {
-			
-			super(x, y, w ,h);
-			
-			animation = new Animation[pose.length];
-			
-			for(int i = 0; i < pose.length; i++) {
-				
-				animation[i] = new Animation(name + "_" + pose[i], count, duration);
-				
-			}
-			
-			
-		}
-		
 
-		public void draw(Graphics pen) {
-			//if attacking, lock into attack pose and free on last frame, right side
-			if(attacking && current_pose == RT) {
-				pen.drawImage(animation[attack_RT].nextImage(), x, y, w, h  + 20, null); 
-				if(Animation.current == 14) {
-					attacking = false;
-				}
-			}
-			//if attacking, lock into attack pose and free on last frame, left side
-			if(attacking && current_pose == LT) {
-				pen.drawImage(animation[attack_LT].nextImage(), x, y, w, h  + 20, null); 
-				if(Animation.current == 14) {
-					attacking = false;
-				}
-				
-			}
-			//movement without attacking
-			if(moving && !attacking &&  !jumping) {
-				pen.drawImage(animation[current_pose].nextImage(), x, y, w, h  + 20, null);
+    Animation[] animation;
+    boolean moving = false;
+    boolean attacking = false;
+    boolean jumping = false;
 
-			}
-			
-			//standing still without attacking
-			if (!moving & !attacking && !jumping) {
-				pen.drawImage(animation[current_pose].stillImage(), x, y, w, h + 20,  null);
-				
-				moving = false;
-			}
-			
-			if (jumping && current_pose == LT) {
-				pen.drawImage(animation[jump_LT].nextImage(), x, y, w, h  + 20,  null);
-				if(Animation.current ==14) {
-					Animation.current = 4;
-				}
-				
-		
-			}
-			
-			if (jumping && current_pose == RT) {
-				pen.drawImage(animation[jump_RT].nextImage(), x, y, w, h,  null);
-				if(Animation.current ==14) {
-					Animation.current = 4;
-				}
-			}
-			
-			
-			
-			
-		}
-		
+    final public static int LT = 0;
+    final public static int RT = 1;
+    final public static int attack_LT = 2;
+    final public static int attack_RT = 3;
+    final public static int hurt_LT = 4;
+    final public static int hurt_RT = 5;
+    final public static int jump_LT = 6;
+    final public static int jump_RT = 7;
 
-		
-		public void go_LT(int dx)
-		{
-			old_x = x;
-			
-			x -= dx;		
+    int current_pose = RT;
 
-			moving = true;
-			
-			current_pose = LT;
-		}
-		
-		
-		public void go_RT(int dx)
-		{
-			old_x = x;
-			
-			x += dx;		
-			
-			moving = true;
-			
-			current_pose = RT;
-		}
-		
-		public void attack_RT() {
-			
-			moving = false;
-			attacking = true;
-			current_pose = RT;
-		}
-		
-		public void attack_LT() {
-			
-			moving = false;
-			attacking = true;
-			current_pose = LT;
-		}
-		
-		public void jump_RT() {
-			jumping = true;
-			moving = false;
-			attacking = false;
-			current_pose = RT;
-		}
-		
-		public void jump_LT() {
-			jumping = true;
-			moving = false;
-			attacking = false;
-			current_pose = LT;
-		}
-		
-		
-		
-	}
+    public Sprite (String name, int x, int y, int w, int h, String[] pose, int count, int duration) {
+        super(x, y, w ,h);
+        animation = new Animation[pose.length];
+        for(int i = 0; i < pose.length; i++) {
+            animation[i] = new Animation(name + "_" + pose[i], count, duration);
+        }
+    }
 
+    public void draw(Graphics pen) {
+    	
+        if(attacking && current_pose == RT) {
+            pen.drawImage(animation[attack_RT].nextImage(), x, y, w, h + 20, null);
+            if(animation[attack_RT].current == 14) attacking = false;
+        }
+        if(attacking && current_pose == LT) {
+            pen.drawImage(animation[attack_LT].nextImage(), x, y, w, h + 20, null);
+            if(animation[attack_LT].current == 14) attacking = false;
+        }
+        if(moving && !attacking && !jumping) {
+            pen.drawImage(animation[current_pose].nextImage(), x, y, w, h +20, null);
+        }
+        if (!moving && !attacking && !jumping) {
+            pen.drawImage(animation[current_pose].stillImage(), x, y , w, h + 20, null);
+        }
+        if (jumping && current_pose == LT) {
+            pen.drawImage(animation[jump_LT].nextImage(), x, y, w, h + 5, null);
+            if(animation[jump_LT].current == 14) animation[jump_LT].current = 4;
+        }
+        if (jumping && current_pose == RT) {
+            pen.drawImage(animation[jump_RT].nextImage(), x, y, w, h, null);
+            if(animation[jump_RT].current == 14) animation[jump_RT].current = 4;
+        }
+    }
+    
+    public Image getCurrentImage() {
+    	return animation[0].nextImage();
+    }
+
+    public void go_LT(int dx) {
+        old_x = x;
+        x -= dx;
+        moving = true;
+        current_pose = LT;
+    }
+
+    public void go_RT(int dx) {
+        old_x = x;
+        x += dx;
+        moving = true;
+        current_pose = RT;
+    }
+
+    public void attack_RT() {
+        moving = false;
+        attacking = true;
+        current_pose = RT;
+    }
+
+    public void attack_LT() {
+        moving = false;
+        attacking = true;
+        current_pose = LT;
+    }
+
+    public void jump_RT() {
+        jumping = true;
+        moving = false;
+        attacking = false;
+        current_pose = RT;
+    }
+
+    public void jump_LT() {
+        jumping = true;
+        moving = false;
+        attacking = false;
+        current_pose = LT;
+    }
+    
+}
 

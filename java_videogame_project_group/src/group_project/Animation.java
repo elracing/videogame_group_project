@@ -8,7 +8,7 @@ public class Animation
 {
 	Image[] image;
 	
-	static int current = 0;
+    int current = 0;
 	
 	int duration;
 	int delay;
@@ -33,7 +33,7 @@ public class Animation
 		{
 		    current++;
 
-		    if(current >= image.length)  current = 1;
+		    if(current >= image.length)  current = 0;
 		    
 		    delay = duration;
 		}

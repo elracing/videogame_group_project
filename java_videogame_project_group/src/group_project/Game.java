@@ -3,6 +3,7 @@ package group_project;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -130,6 +131,8 @@ public class Game extends GameBase{
 	Image image12 = getImage("Tile_56.png"); //K tile  for level 2
 	Image image13 = getImage("5.png");//L stone for level 3
 	Image image14 = getImage("3.png");//M stone for level1 =3
+	
+	Image testEnemy = getImage("enemy_dying_rt_15.png");
 	
 	BufferedImage[] key = new BufferedImage[4];
 	int keyFrameIndex = 0;
@@ -269,7 +272,18 @@ public class Game extends GameBase{
 	            if (tile == 'G' && enemiesDefeated >= killThreshold) loadNextLevel();
 	        }
 
-			
+	        //Enemy gravity, platform detection, and patrol logic
+	        for (Enemy enemy : enemies) {
+	            enemy.updatePhysics(gravity);
+	            for (Rect platform : tile) {
+	                enemy.checkPlatformCollision(platform);
+	            }
+	            if (enemy.onPlatform) {
+	                enemy.updateAI(player,currmap, S);
+	            }
+	            
+	            enemy.updateDying();
+	        }
 			
 			
 			//enemy damage
@@ -277,17 +291,38 @@ public class Game extends GameBase{
 			while (iter.hasNext()) {
 				Enemy enemy = iter.next();
 			
-				if (player.attacking & player.overlaps(enemy)) { //if attacking, deal damage to enemy
-					enemy.health -= player.attackPower;
+				if (player.attacking && player.overlaps(enemy)) { //if attacking, deal damage to enemy
+					enemy.takeDamage(player.attackPower);
 				}
 				
-				if (enemy.overlaps(player) && !player.attacking) { //if not attacking, receive damage
-					player.health -= enemy.attackPower;
+				if (enemy.overlaps(player) && !player.attacking && !enemy.dying) {//if not attacking, receive damage
+					 now = System.currentTimeMillis();
+					if(now - player.lastHitTime >= player.hitCooldown) {
+						enemy.attackPlayer(player);
+						player.health -= enemy.attackPower;
+					}
+					
 				}
 				
-				if (enemy.health <= 0) { //"kills" the enemy when health is 0 safety (no need to worry about nulls)
+				if(enemy.isPlayerInAttackRange(player)) {
+					enemy.startAttacking();
+				} else {
+					enemy.stopAttacking();
+				}
+				
+				//Let enemy handle its own dying update 
+				enemy.updateDying();
+				
+				if(enemy.readyToRemove) {
 					iter.remove();
 					enemiesDefeated++;
+				
+				/*if (enemy.health <= 0 && !enemy.dying) { //"kills" the enemy when health is 0 safety (no need to worry about nulls)
+					enemy.startDying();
+					enemiesDefeated++;
+				*/
+					//iter.remove();
+					//enemiesDefeated++;
 				}
 			}
 			
@@ -326,7 +361,14 @@ public class Game extends GameBase{
 		}
 		
 		
-		player.draw(pen);	//draw player here		
+		player.draw(pen);	//draw player here
+		
+		//Draw all enemies
+		for (Enemy enemy: enemies) {
+			enemy.draw(pen);
+		}
+		
+		//pen.drawImage(testEnemy, 400, 400, 64, 64, null);
 		
 	
 	}
@@ -334,8 +376,12 @@ public class Game extends GameBase{
 	public void initialize() {
 		currmap = map[currentLevel];
 		tile.clear();
+		
+		//adjust enemy positions (Level 1 only)
 
-		    // Set the map
+		//Enemies are placed on known solid tiles to ensure proper patrol
+		
+		// Set the map
 		    
 		for (int row = 0; row < currmap.length; row++) {
 	        for (int col = 0; col < currmap[row].length(); col++) {
@@ -345,6 +391,19 @@ public class Game extends GameBase{
 	            }
 	        }
 	    }
+		
+		if (currentLevel == 0) {
+			  enemies.clear();
+		        enemies.add(new Enemy(6 * S, 5 * S - 64));
+		        enemies.add(new Enemy(20 * S, 10 * S - 64));
+		        enemies.add(new Enemy(10 * S, 10 * S - 64));
+		        enemies.add(new Enemy(18 * S, 14 * S - 64));
+		        enemies.add(new Enemy(26 * S, 14 * S - 64));
+		        enemies.add(new Enemy(34 * S, 14 * S - 64));
+		        enemies.add(new Enemy(15 * S, 17 * S - 64));
+		        enemies.add(new Enemy(23 * S, 18 * S - 64));
+		        enemies.add(new Enemy(30 * S, 18 * S - 64));
+		        enemies.add(new Enemy(11 * S, 22 * S - 64));
 
 	    
 	    //animating the key
@@ -363,7 +422,7 @@ public class Game extends GameBase{
 	    player.x = 0;
 	    player.y = 0;
 	    player.yVelocity = 0;
-
+		}
 }
 	
 	public void loadNextLevel() {
