@@ -19,7 +19,7 @@
 	
 
 } */
-
+   
 package group_project;
 
 import java.awt.Color;
@@ -37,7 +37,7 @@ public class Enemy extends Sprite {
     boolean dying = false;
     int dyingFrame = 0;
     boolean readyToRemove = false;
-    int dyingDelay = 5; // controls how long each dying frame last
+    int dyingDelay = 5;
     int dyingDelayCounter = dyingDelay;
 
     static String[] enemyPose = {"rt", "attack_rt", "dying_rt"};
@@ -51,13 +51,13 @@ public class Enemy extends Sprite {
     }
     
     public void startAttacking() {
-    	attacking = true;
-    	current_pose = ATTACK_RT; //Always use right pose and flip image if needed
+        attacking = true;
+        current_pose = ATTACK_RT;
     }
     
     public void stopAttacking() {
-    	attacking = false;
-    	current_pose = WALK_RT;
+        attacking = false;
+        current_pose = WALK_RT;
     }
 
     @Override
@@ -66,8 +66,7 @@ public class Enemy extends Sprite {
         int yOffset = 5;
 
         if (dying) {
-            //img = animation[DYING_RT].nextImage();
-        	img = animation[DYING_RT].image[Math.min(dyingFrame,  animation[DYING_RT].image.length -1)];
+            img = animation[DYING_RT].image[Math.min(dyingFrame,  animation[DYING_RT].image.length -1)];
         } else if (attacking) {
             img = animation[ATTACK_RT].nextImage();
         } else {
@@ -87,16 +86,37 @@ public class Enemy extends Sprite {
     }
 
     public void updateAI(Player player, String[] map, int tileSize) {
-        if (dying) return; //skip AI if dying
+        if (dying) return;
 
-        //check player range only if alive
-       if(isPlayerInAttackRange(player)) {
-    	   startAttacking();
-    	   //stop moving when attacking
-    	   return;
-       } else {
-    	   stopAttacking();
-       }
+        int detectionRangeX = 400;
+        int detectionRangeY = 30;
+
+        int playerCenterX = player.x + player.w / 2;
+        int enemyCenterX = x + w / 2;
+        int playerCenterY = player.y + player.h / 2;
+        int enemyCenterY = y + h / 2;
+
+        boolean inDetectionRange = Math.abs(playerCenterX - enemyCenterX) <= detectionRangeX &&
+                                   Math.abs(playerCenterY - enemyCenterY) <= detectionRangeY;
+
+        if (inDetectionRange) {
+            if (canAttackPlayer(player, map, tileSize)) {
+                startAttacking();
+                return;
+            } else {
+                stopAttacking();
+            }
+
+            if (!attacking) {
+                if (playerCenterX > enemyCenterX && !movingRight) {
+                    flipDirection();
+                } else if (playerCenterX < enemyCenterX && movingRight) {
+                    flipDirection();
+                }
+            }
+        } else {
+            stopAttacking();
+        }
 
         if (!attacking && onPlatform) {
             int footX = movingRight ? x + w : x - 1;
@@ -117,6 +137,7 @@ public class Enemy extends Sprite {
 
             if (!isSolidBelow || isBlockedFront) {
                 flipDirection();
+                return;
             }
 
             if (movingRight) {
@@ -126,22 +147,41 @@ public class Enemy extends Sprite {
             }
         }
     }
-    
-    public boolean isPlayerInAttackRange(Player player) {
-    	int attackRange = 100; // Attack distance on x axis
-    	int verticalTolerance = 30; //Allow small Y difference to account for slight position offsets
-    	
-    	//Calculate center points for better accuracy
-    	int enemyCenterX = x + w/2;
-    	int playerCenterX = player.x + player.w /2;
-    	int enemyCenterY = y + h/2;
-    	int playerCenterY = player.y + player.h /2;
-    	
-    	
-    	boolean closeInX = Math.abs(playerCenterX - enemyCenterX) <= attackRange;
-    	boolean alignedY = Math.abs(playerCenterY - enemyCenterY) <= verticalTolerance;
-    	
-    	return closeInX && alignedY;
+
+    private void flipDirection() {
+        movingRight = !movingRight;
+    }
+
+    public boolean canAttackPlayer(Player player, String[] map, int tileSize) {
+        int enemyFeetY = (y + h - 1) / tileSize;
+        int playerFeetY = (player.y + player.h - 1) / tileSize;
+
+        if (enemyFeetY != playerFeetY) return false;
+
+        int enemyCenterX = x + w / 2;
+        int playerCenterX = player.x + player.w / 2;
+
+        boolean playerInFront = (movingRight && playerCenterX > enemyCenterX) ||
+                                (!movingRight && playerCenterX < enemyCenterX);
+
+        if (!playerInFront) return false;
+
+        int attackRange = 100;
+        if (Math.abs(playerCenterX - enemyCenterX) > attackRange) return false;
+
+        int startX = Math.min(enemyCenterX / tileSize, playerCenterX / tileSize);
+        int endX = Math.max(enemyCenterX / tileSize, playerCenterX / tileSize);
+
+        for (int i = startX + 1; i < endX; i++) {
+            if (i < 0 || i >= map[0].length()) return false;
+            if (isTile(map[enemyFeetY].charAt(i))) return false;
+        }
+
+        return true;
+    }
+
+    private boolean isTile(char c) {
+        return c == 'A' || c == 'B' || c == 'K';
     }
 
     public void updatePhysics(int gravity) {
@@ -152,10 +192,10 @@ public class Enemy extends Sprite {
     }
     
     public void takeDamage(double damage) {
-    	health -= damage;
-    	if(health <= 0 && !dying) {
-    		startDying();
-    	}
+        health -= damage;
+        if (health <= 0 && !dying) {
+            startDying();
+        }
     }
 
     public void checkPlatformCollision(Rect platform) {
@@ -171,41 +211,29 @@ public class Enemy extends Sprite {
         }
     }
 
-    private void flipDirection() {
-        movingRight = !movingRight;
-    }
-
-    private boolean isTile(char c) {
-        return c == 'A' || c == 'B' || c == 'K';
-    }
-
     public void startDying() {
         dying = true;
         dyingFrame = 0;
         current_pose = DYING_RT;
-        //attacking = false;
-        //moving = false;
     }
-    
+
     public void attackPlayer(Player player) {
-    	if(dying) return;
-    	player.takeDamage(attackPower);
+        if (dying) return;
+        player.takeDamage(attackPower);
     }
-    
+
     public void updateDying() {
-    	if(dying) {
-    		dyingDelayCounter--;
-    		if(dyingDelayCounter <= 0) {
-    			    dyingFrame++;
-    			    dyingDelayCounter = dyingDelay; //Reset delay counter
-    			if(dyingFrame >= 15) { //After full 15 frames
-    				
-    				readyToRemove = true; //Mark for removal
-    			}
-    			    
-    			    
-    		}
-    	}
+        if (dying) {
+            dyingDelayCounter--;
+            if (dyingDelayCounter <= 0) {
+                dyingFrame++;
+                dyingDelayCounter = dyingDelay;
+                if (dyingFrame >= 15) {
+                    readyToRemove = true;
+                }
+            }
+        }
     }
 }
+ 
 

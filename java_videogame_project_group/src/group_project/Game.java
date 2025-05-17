@@ -304,11 +304,12 @@ public class Game extends GameBase{
 					
 				}
 				
-				if(enemy.isPlayerInAttackRange(player)) {
+			/*	if(enemy.isPlayerInAttackRange(player , currmap, S)) {
 					enemy.startAttacking();
 				} else {
 					enemy.stopAttacking();
 				}
+			*/
 				
 				//Let enemy handle its own dying update 
 				enemy.updateDying();
