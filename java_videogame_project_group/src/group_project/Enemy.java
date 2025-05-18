@@ -39,6 +39,9 @@ public class Enemy extends Sprite {
     int hurtCooldown = 30;
     int hurtCounter = 0;
     
+    int windUpDelay = 30; //delay before attack starts
+    int windUpCounter = 0;
+    
     int attackCooldown = 60;
     int attackCounter = 0;
     
@@ -111,14 +114,22 @@ public class Enemy extends Sprite {
 
         if (inDetectionRange) {
             if (canAttackPlayer(player, map, tileSize)) {
-                if(attackCounter ==0) {
-                	startAttacking();
-                	attackCounter = attackCooldown;
-                	
-                	//player.takeDamage(attackPower);
+                if (!attacking && windUpCounter == 0) {
+                	windUpCounter = windUpDelay; //start wind-up when player spotted
                 }
+                
+                if(windUpCounter > 0) {
+                	windUpCounter--;
+                	if(windUpCounter == 0 && attackCounter ==0) {
+                		startAttacking();
+                		attackCounter = attackCooldown;
+                	}
+    
+                }
+            
             } else {
                 stopAttacking();
+                windUpCounter = 0; // reset wind-up if player leaves detection
             }
 
             if (!attacking) {
