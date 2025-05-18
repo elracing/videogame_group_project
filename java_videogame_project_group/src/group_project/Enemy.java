@@ -35,6 +35,13 @@ public class Enemy extends Sprite {
     boolean movingRight = true;
     
     boolean dying = false;
+    
+    int hurtCooldown = 30;
+    int hurtCounter = 0;
+    
+    int attackCooldown = 60;
+    int attackCounter = 0;
+    
     int dyingFrame = 0;
     boolean readyToRemove = false;
     int dyingDelay = 5;
@@ -86,7 +93,10 @@ public class Enemy extends Sprite {
     }
 
     public void updateAI(Player player, String[] map, int tileSize) {
-        if (dying) return;
+        if (dying || hurtCounter >0) {
+        	if(hurtCounter > 0) hurtCounter--;
+        	return;
+        }
 
         int detectionRangeX = 400;
         int detectionRangeY = 30;
@@ -101,8 +111,12 @@ public class Enemy extends Sprite {
 
         if (inDetectionRange) {
             if (canAttackPlayer(player, map, tileSize)) {
-                startAttacking();
-                return;
+                if(attackCounter ==0) {
+                	startAttacking();
+                	attackCounter = attackCooldown;
+                	
+                	//player.takeDamage(attackPower);
+                }
             } else {
                 stopAttacking();
             }
@@ -145,6 +159,12 @@ public class Enemy extends Sprite {
             } else {
                 go_LT(2);
             }
+        }
+        
+        //decrement attack cooldown here
+        if(attackCounter > 0) {
+        	attackCounter--;
+        	if(attackCounter == 0) stopAttacking();
         }
     }
 
@@ -192,10 +212,15 @@ public class Enemy extends Sprite {
     }
     
     public void takeDamage(double damage) {
-        health -= damage;
-        if (health <= 0 && !dying) {
-            startDying();
-        }
+       if (dying) return; //allow taking damage even if hurting, so death happens right away
+       
+       health -= damage;
+       
+       if (health <= 0) {
+    	   startDying(); //die immediately
+       } else {
+    	   hurtCounter = hurtCooldown; //apply hurt cooldown
+       }
     }
 
     public void checkPlatformCollision(Rect platform) {

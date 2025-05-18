@@ -18,7 +18,7 @@ import javax.imageio.ImageIO;
 
 public class Game extends GameBase{
 	public static final int S = 32;
-	int enemiesDefeated = 0; //tracks enemies killed
+	//int enemiesDefeated = 0; //tracks enemies killed
 	int killThreshold = 10; //number needed to reach in order to trigger key spawn
 	
 	String[][] map = {
@@ -106,12 +106,14 @@ public class Game extends GameBase{
 		}
 	};
 	int currentLevel = 0;
-	String[] currmap = map[currentLevel];	
+	String[] currmap = map[currentLevel];
+	int[] enemiesDefeatedByLevel = new int[map.length];
 			
 	
 	Player player = new Player(0, 0); //make player
 	ArrayList<Enemy> enemies = new ArrayList<>(); //add your enemies to this list, you can control behavior as a whole this way
 	ArrayList<Rect> tile = new ArrayList<>(); //placeholder list for tiles, made this to make floor overlap logic
+	Troll boss = null;
 	int gravity = 1; //used to calculate falls
 
 	Image background = getImage("Background.png");
@@ -269,7 +271,7 @@ public class Game extends GameBase{
 
 	        if (bottomY >= 0 && bottomY < currmap.length && centerX >= 0 && centerX < currmap[bottomY].length()) {
 	            char tile = currmap[bottomY].charAt(centerX);
-	            if (tile == 'G' && enemiesDefeated >= killThreshold) loadNextLevel();
+	            if (tile == 'G' && enemiesDefeatedByLevel[currentLevel] >= killThreshold) loadNextLevel();
 	        }
 
 	        //Enemy gravity, platform detection, and patrol logic
@@ -283,6 +285,12 @@ public class Game extends GameBase{
 	            }
 	            
 	            enemy.updateDying();
+	        }
+	        
+	        if(boss != null) {
+	        	boss.updatePhysics(gravity);
+	        	for (Rect platform : tile) boss.checkPlatformCollision(platform);
+	        	boss.updateAI(player, currmap, S);
 	        }
 			
 			
@@ -316,7 +324,7 @@ public class Game extends GameBase{
 				
 				if(enemy.readyToRemove) {
 					iter.remove();
-					enemiesDefeated++;
+					enemiesDefeatedByLevel[currentLevel]++;
 				
 				/*if (enemy.health <= 0 && !enemy.dying) { //"kills" the enemy when health is 0 safety (no need to worry about nulls)
 					enemy.startDying();
@@ -324,6 +332,22 @@ public class Game extends GameBase{
 				*/
 					//iter.remove();
 					//enemiesDefeated++;
+				}
+			}
+			
+			if(boss != null) {
+				if(player.attacking && player.overlaps(boss)) {
+					boss.takeDamage(player.attackPower);
+				}
+				
+				boss.updatePhysics(gravity);
+				for(Rect platform : tile) boss.checkPlatformCollision(platform);
+				boss.updateAI(player, currmap, S);
+				boss.updateDying();
+				
+				if(boss.readyToRemove) {
+					boss = null;
+					enemiesDefeatedByLevel[currentLevel]++;
 				}
 			}
 			
@@ -352,7 +376,7 @@ public class Game extends GameBase{
 				if (c == 'E')pen.drawImage(image6, S * col, S * row, S, S, null);
 				if (c == 'F')pen.drawImage(image7, S * col, S * row, S, S, null);
 				if (c == 'I')pen.drawImage(image10, S * col, S * row, S, S, null);
-				if (c == 'G' && key[keyFrameIndex] != null && enemiesDefeated >= killThreshold) pen.drawImage(key[keyFrameIndex], S * col, S * row, S, S, null);
+				if (c == 'G' && key[keyFrameIndex] != null && enemiesDefeatedByLevel[currentLevel] >= killThreshold && currentLevel < 2) pen.drawImage(key[keyFrameIndex], S * col, S * row, S, S, null);
 				if (c == 'J')pen.drawImage(image11, S * col, S * row, S, S, null);
 				if (c == 'K')pen.drawImage(image12, S * col, S * row, S, S, null);
 				if (c == 'L')pen.drawImage(image13, S * col, S * row, S, S, null);
@@ -369,6 +393,8 @@ public class Game extends GameBase{
 			enemy.draw(pen);
 		}
 		
+		if(boss != null) boss.draw(pen);
+		
 		//pen.drawImage(testEnemy, 400, 400, 64, 64, null);
 		
 	
@@ -377,6 +403,8 @@ public class Game extends GameBase{
 	public void initialize() {
 		currmap = map[currentLevel];
 		tile.clear();
+		enemies.clear();
+		boss = null;
 		
 		//adjust enemy positions (Level 1 only)
 
@@ -405,7 +433,36 @@ public class Game extends GameBase{
 		        enemies.add(new Enemy(23 * S, 18 * S - 64));
 		        enemies.add(new Enemy(30 * S, 18 * S - 64));
 		        enemies.add(new Enemy(11 * S, 22 * S - 64));
-
+		}
+		
+		 if (currentLevel == 1) {
+			  enemies.clear();
+		        enemies.add(new Enemy(2 * S, 6 * S - 64)); 
+		        enemies.add(new Enemy(10 * S, 11 * S - 64)); 
+		        enemies.add(new Enemy(4 * S, 12 * S - 64)); 
+		        enemies.add(new Enemy(28 * S, 7 * S - 64));
+		        enemies.add(new Enemy(24 * S, 13 * S - 64)); 
+		        enemies.add(new Enemy(22 * S, 15 * S - 64)); 
+		        enemies.add(new Enemy(4 * S, 19 * S - 64));
+		        enemies.add(new Enemy(5 * S, 21 * S - 64)); 
+		        enemies.add(new Enemy(16 * S, 21 * S - 64));
+		        enemies.add(new Enemy(20 * S, 7 * S - 64));
+		} 
+		
+		 if (currentLevel == 2) {
+            enemies.add(new Enemy(33 * S, 17 * S - 64));
+            enemies.add(new Enemy(10 * S, 7 * S - 64));
+            enemies.add(new Enemy(16 * S, 10 * S - 64));
+            enemies.add(new Enemy(20 * S, 13 * S - 64));
+            enemies.add(new Enemy(25 * S, 14 * S - 64));
+            enemies.add(new Enemy(30 * S, 17 * S - 64));
+            enemies.add(new Enemy(34 * S, 19 * S - 64));
+            enemies.add(new Enemy(15 * S, 20 * S - 64));
+            enemies.add(new Enemy(26 * S, 21 * S - 64));
+            //boss = new Troll(35 * S, 21 * S - 160);
+            boss = new Troll(3 * S, 4 *S -160);
+        }
+		
 	    
 	    //animating the key
 	    try {
@@ -423,7 +480,7 @@ public class Game extends GameBase{
 	    player.x = 0;
 	    player.y = 0;
 	    player.yVelocity = 0;
-		}
+		
 }
 	
 	public void loadNextLevel() {

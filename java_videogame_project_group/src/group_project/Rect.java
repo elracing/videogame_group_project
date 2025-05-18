@@ -134,7 +134,7 @@ public class Rect {
         return mx > this.x && mx < this.x + this.w && my > this.y && my < this.y + this.h;
     }
     
-	public void updatePosition() { //changes y based on velocity
+ 	public void updatePosition() { //changes y based on velocity
 	    y += yVelocity;
 	}
 	
