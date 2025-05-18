@@ -1,6 +1,8 @@
 //restarted protion
 package group_project;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -16,10 +18,12 @@ import javax.imageio.ImageIO;
 
 
 
+
 public class Game extends GameBase{
 	public static final int S = 32;
 	//int enemiesDefeated = 0; //tracks enemies killed
 	int killThreshold = 10; //number needed to reach in order to trigger key spawn
+	boolean gameOver = false; //triggers game over 
 	
 	String[][] map = {
 			{
@@ -145,6 +149,8 @@ public class Game extends GameBase{
 	public void inGameLoop() {
 		 //track time, used to calculate time on things, like jumps.
 		double currentTime = System.currentTimeMillis();
+	
+	
 		
 		player.moving = false;
 			
@@ -172,41 +178,45 @@ public class Game extends GameBase{
 		//when player goes left or right it cant walk through the tile
 		//had to modify it because it was giving me an error when the player went towards the right boundary, it froze the game
 		//this section also had to get fixed after levels were added, since each level has different chars for the tiles, had to settle with creating a boolean method
-		if (pressing[LT] && !player.attacking) {
-		    if (topTile >= 0 && bottomTile < currmap.length && leftTile >= 0 && leftTile < currmap[0].length()) {
-		        if (!isTile(currmap[topTile].charAt(leftTile)) && !isTile(currmap[bottomTile].charAt(leftTile))) {
-		            player.go_LT(S / 8);
-		        }
-		    }
+		
+		if (!gameOver) { //disable movement if gameover
+			if (pressing[LT] && !player.attacking) {
+			    if (topTile >= 0 && bottomTile < currmap.length && leftTile >= 0 && leftTile < currmap[0].length()) {
+			        if (!isTile(currmap[topTile].charAt(leftTile)) && !isTile(currmap[bottomTile].charAt(leftTile))) {
+			            player.go_LT(S / 8);
+			        }
+			    }
+			}
+			if (pressing[RT] && !player.attacking) {
+			    if (topTile >= 0 && bottomTile < currmap.length && rightTile >= 0 && rightTile < currmap[0].length()) {
+			        if (!isTile(currmap[topTile].charAt(rightTile)) && !isTile(currmap[bottomTile].charAt(rightTile))) {
+			            player.go_RT(S / 8);
+			        }
+			    }
+			}
+				
+				
+				if(pressing[_F] && (player.current_pose == Sprite.RT))   { //press f to attack, right side position
+					player.attack_RT();
+				}
+				
+				if(pressing[_F] && (player.current_pose == Sprite.LT))   {//press f to attack, left side position
+					player.attack_LT();
+				}
+				
+				if(pressing[SPACE] && (player.onPlatform) && (player.current_pose == Sprite.RT)) { //adds a jump by yVelocity, RT
+					player.jump_RT();
+					player.yVelocity = player.jump_strength;
+				    player.onPlatform = false;
+				}
+				
+				if(pressing[SPACE] && (player.onPlatform) && (player.current_pose == Sprite.LT)) { //adds a jump by yVelocity, RT
+				    player.jump_LT();
+					player.yVelocity = player.jump_strength;
+				    player.onPlatform = false;
+				}
+				
 		}
-		if (pressing[RT] && !player.attacking) {
-		    if (topTile >= 0 && bottomTile < currmap.length && rightTile >= 0 && rightTile < currmap[0].length()) {
-		        if (!isTile(currmap[topTile].charAt(rightTile)) && !isTile(currmap[bottomTile].charAt(rightTile))) {
-		            player.go_RT(S / 8);
-		        }
-		    }
-		}
-			
-			
-			if(pressing[_F] && (player.current_pose == Sprite.RT))   { //press f to attack, right side position
-				player.attack_RT();
-			}
-			
-			if(pressing[_F] && (player.current_pose == Sprite.LT))   {//press f to attack, left side position
-				player.attack_LT();
-			}
-			
-			if(pressing[SPACE] && (player.onPlatform) && (player.current_pose == Sprite.RT)) { //adds a jump by yVelocity, RT
-				player.jump_RT();
-				player.yVelocity = player.jump_strength;
-			    player.onPlatform = false;
-			}
-			
-			if(pressing[SPACE] && (player.onPlatform) && (player.current_pose == Sprite.LT)) { //adds a jump by yVelocity, RT
-			    player.jump_LT();
-				player.yVelocity = player.jump_strength;
-			    player.onPlatform = false;
-			}
 			
 			//makes it so that the player does not go out of bounds
 			if (player.x < 0) {
@@ -308,6 +318,13 @@ public class Game extends GameBase{
 					if(now - player.lastHitTime >= player.hitCooldown) {
 						enemy.attackPlayer(player);
 						player.health -= enemy.attackPower;
+						if (player.current_pose == Sprite.LT) {
+							player.hurt_LT();
+						}
+						
+						if (player.current_pose == Sprite.RT) {
+							player.hurt_RT();
+						}
 					}
 					
 				}
@@ -352,10 +369,24 @@ public class Game extends GameBase{
 			}
 			
 			
-	}
+			//handle player death
+			
+			if (player.health <= 0) {
+				gameOver = true;
+				if (player.current_pose == Sprite.RT) {
+					player.die_RT();
+				}
+				
+				if (player.current_pose == Sprite.LT) {
+					player.die_LT();
+				}
+				
+			}
+			
+		} 
+			
+			
 		
-	
-	
 	
 
 
@@ -397,6 +428,40 @@ public class Game extends GameBase{
 		
 		//pen.drawImage(testEnemy, 400, 400, 64, 64, null);
 		
+		//Game over screen
+		
+		if (gameOver) { 
+		    pen.setColor(new Color(0, 0, 0, 200)); // semi-transparent overlay
+		    pen.fillRect(0, 0, 1920, 1080);
+	
+		    pen.setColor(Color.WHITE);
+		    pen.setFont(new Font("Arial", Font.BOLD, 100));
+		    pen.drawString("GAME OVER!", 1920 / 2 - 250, 200);
+		}
+		
+		// draw "hp"
+		
+		pen.setColor(Color.RED);
+		pen.setFont(new Font("Arial", Font.BOLD, 36));
+		pen.drawString("HP", 20, 40);
+		
+		//draw player health bar
+		
+		int barWidth = 200;
+		int barHeight = 30;
+		int healthBarX = 20;
+		int healthBarY = 60;
+		
+		
+		//bar background
+		pen.setColor(Color.DARK_GRAY);
+		pen.fillRect(healthBarX, healthBarY, barWidth, barHeight);
+		
+		//red bar set up
+		
+        pen.setColor(Color.RED);
+        int currentBarWidth = (int)((player.health / (double)player.maxHealth) * barWidth);
+        pen.fillRect(healthBarX, healthBarY, currentBarWidth, barHeight);
 	
 	}
 	
@@ -480,6 +545,10 @@ public class Game extends GameBase{
 	    player.x = 0;
 	    player.y = 0;
 	    player.yVelocity = 0;
+<<<<<<< HEAD
+=======
+		}
+>>>>>>> 623f3585ccf6f553d40628b4381281d0f84e0c58
 		
 }
 	

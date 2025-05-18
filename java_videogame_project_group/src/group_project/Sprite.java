@@ -110,6 +110,8 @@ public class Sprite extends Rect{
     boolean moving = false;
     boolean attacking = false;
     boolean jumping = false;
+    boolean dead = false;
+    boolean hurting = false;
 
     final public static int LT = 0;
     final public static int RT = 1;
@@ -119,6 +121,8 @@ public class Sprite extends Rect{
     final public static int hurt_RT = 5;
     final public static int jump_LT = 6;
     final public static int jump_RT = 7;
+    final public static int death_LT = 8;
+    final public static int death_RT = 9;
 
     int current_pose = RT;
 
@@ -132,28 +136,51 @@ public class Sprite extends Rect{
 
     public void draw(Graphics pen) {
     	
-        if(attacking && current_pose == RT) {
-            pen.drawImage(animation[attack_RT].nextImage(), x, y, w, h + 20, null);
-            if(animation[attack_RT].current == 14) attacking = false;
+    	if (!dead) { 
+	        if(attacking && current_pose == RT) {
+	            pen.drawImage(animation[attack_RT].nextImage(), x, y, w, h + 20, null);
+	            if(animation[attack_RT].current == 14) attacking = false;
+	        }
+	        if(attacking && current_pose == LT) {
+	            pen.drawImage(animation[attack_LT].nextImage(), x, y, w, h + 20, null);
+	            if(animation[attack_LT].current == 14) attacking = false;
+	        }
+	        if(moving && !attacking && !jumping) {
+	            pen.drawImage(animation[current_pose].nextImage(), x, y, w, h + 20, null);
+	        }
+	        if (!moving && !attacking && !jumping) {
+	            pen.drawImage(animation[current_pose].stillImage(), x, y , w, h + 20, null);
+	        }
+	        if (jumping && current_pose == LT) {
+	            pen.drawImage(animation[jump_LT].nextImage(), x, y, w, h + 5, null);
+	            if(animation[jump_LT].current == 14) animation[jump_LT].current = 4;
+	        }
+	        if (jumping && current_pose == RT) {
+	            pen.drawImage(animation[jump_RT].nextImage(), x, y, w, h + 20, null);
+	            if(animation[jump_RT].current == 14) animation[jump_RT].current = 4;
+	        }
+	        
+	        if (hurting && current_pose == LT) {
+	        	pen.drawImage(animation[hurt_LT].nextImage(), x, y, w, h + 20, null);
+	        }
+	        
+	        if (hurting && current_pose == RT) {
+	        	pen.drawImage(animation[hurt_RT].nextImage(), x, y, w, h + 20, null);
+	        }
+    	}
+    	
+        
+        if ((dead) && current_pose == LT) { //loop back to 12, adds a bit of flashing
+            pen.drawImage(animation[death_LT].nextImage(), x, y + 10, w + 20, h, null);
+            if(animation[death_LT].current == 14) animation[death_LT].current = 12;
         }
-        if(attacking && current_pose == LT) {
-            pen.drawImage(animation[attack_LT].nextImage(), x, y, w, h + 20, null);
-            if(animation[attack_LT].current == 14) attacking = false;
+        
+        if ((dead) && current_pose == RT) { 
+            pen.drawImage(animation[death_RT].nextImage(), x, y + 10, w + 20, h, null);
+            if(animation[death_RT].current == 14) animation[death_RT].current = 12;
         }
-        if(moving && !attacking && !jumping) {
-            pen.drawImage(animation[current_pose].nextImage(), x, y, w, h +20, null);
-        }
-        if (!moving && !attacking && !jumping) {
-            pen.drawImage(animation[current_pose].stillImage(), x, y , w, h + 20, null);
-        }
-        if (jumping && current_pose == LT) {
-            pen.drawImage(animation[jump_LT].nextImage(), x, y, w, h + 5, null);
-            if(animation[jump_LT].current == 14) animation[jump_LT].current = 4;
-        }
-        if (jumping && current_pose == RT) {
-            pen.drawImage(animation[jump_RT].nextImage(), x, y, w, h, null);
-            if(animation[jump_RT].current == 14) animation[jump_RT].current = 4;
-        }
+        
+
     }
     
     public Image getCurrentImage() {
@@ -198,6 +225,30 @@ public class Sprite extends Rect{
         moving = false;
         attacking = false;
         current_pose = LT;
+    }
+    
+    public void die_RT() {
+    	dead = true;
+        jumping = false;
+        moving = false;
+        attacking = false;
+        current_pose = RT;
+    }
+    
+    public void die_LT() {
+    	dead = true;
+        jumping = false;
+        moving = false;
+        attacking = false;
+        current_pose = LT;
+    }
+    
+    public void hurt_RT() {
+    	hurting = true;
+    }
+    
+    public void hurt_LT() {
+    	hurting = true;
     }
     
 }

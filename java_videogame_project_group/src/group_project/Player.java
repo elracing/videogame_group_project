@@ -5,6 +5,7 @@ public class Player extends Sprite{
 	
 	int starsCollected = 0; //variable for "star" powerups
 	int health = 100;
+	int maxHealth = 100;
 	double attackPower = 10 + (starsCollected * 0.10);  //increases attack based on stars collected
 	boolean onPlatform = false; //detects if the player is on a platform
 	
@@ -20,7 +21,7 @@ public class Player extends Sprite{
 	
 	//pose array
 	
-	static String[] pose = {"lt", "rt", "attack_lt", "attack_rt", "hurt_lt", "hurt_rt", "jump_lt", "jump_rt"}; //holds current poses for the character
+	static String[] pose = {"lt", "rt", "attack_lt", "attack_rt", "hurt_lt", "hurt_rt", "jump_lt", "jump_rt", "death_lt", "death_rt"}; //holds current poses for the character
 		
 	//constructor
 	
