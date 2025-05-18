@@ -17,17 +17,25 @@ public class Sound {
 		soundURL[1] = getClass().getResource("/sounds/attackSound.wav");
 		soundURL[2] = getClass().getResource("/sounds/deathSound.wav");
 		soundURL[3] = getClass().getResource("/sounds/jumpSound.wav");
-		soundURL[3] = getClass().getResource("/sounds/keySoundmp3.wav");
+		soundURL[4] = getClass().getResource("/sounds/keySoundmp3.wav");
 		
 	}
 	
 	//
 	public void setFile(int i) {
 		try {
+			if(soundURL[i] == null) {
+				System.out.println("Sound file not found for index: " +i);
+				return;
+			}
+			
 			AudioInputStream audioIS = AudioSystem.getAudioInputStream(soundURL[i]);
 			clip = AudioSystem.getClip();
 			clip.open(audioIS);
-		}catch(Exception e) {}
+		}catch(Exception e) {
+			System.out.println("Error loading sound at index " + i + ": " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 	
 	

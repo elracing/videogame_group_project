@@ -24,6 +24,7 @@ public class Game extends GameBase{
 	//int enemiesDefeated = 0; //tracks enemies killed
 	int killThreshold = 10; //number needed to reach in order to trigger key spawn
 	boolean gameOver = false; //triggers game over 
+	public boolean gameStarted = false;
 	
 	String[][] map = {
 			{
@@ -119,6 +120,9 @@ public class Game extends GameBase{
 	ArrayList<Rect> tile = new ArrayList<>(); //placeholder list for tiles, made this to make floor overlap logic
 	Troll boss = null;
 	int gravity = 1; //used to calculate falls
+	
+	Sound backgroundMusic = new Sound();
+	boolean musicStarted = false;
 
 	Image background = getImage("Background.png");
 	Image image2 = getImage("Tile_25.png");//A tile for level 1
@@ -147,7 +151,9 @@ public class Game extends GameBase{
 	
 	
 	public void inGameLoop() {
-		 //track time, used to calculate time on things, like jumps.
+		if(!gameStarted) return;
+		
+		//track time, used to calculate time on things, like jumps.
 		double currentTime = System.currentTimeMillis();
 	
 	
@@ -561,6 +567,12 @@ public class Game extends GameBase{
 	    player.x = 0;
 	    player.y = 0;
 	    player.yVelocity = 0;
+	    
+	    if(!musicStarted) {
+	    	backgroundMusic.setFile(0);
+	    	backgroundMusic.loop();
+	    	musicStarted = true;
+	    }
 		
 }
 	
