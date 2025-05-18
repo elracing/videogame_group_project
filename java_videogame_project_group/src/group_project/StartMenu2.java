@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 /*import java.applet.Applet;
+=======
+package group_project;
+
+import java.applet.Applet;
+>>>>>>> 03806ab1823f3da97286082d9eb955375835b224
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;

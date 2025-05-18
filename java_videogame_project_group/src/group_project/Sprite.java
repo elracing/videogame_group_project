@@ -162,10 +162,12 @@ public class Sprite extends Rect{
 	        
 	        if (hurting && current_pose == LT) {
 	        	pen.drawImage(animation[hurt_LT].nextImage(), x, y, w, h + 20, null);
+	        	if(animation[hurt_LT].current == 14) hurting = false;
 	        }
 	        
 	        if (hurting && current_pose == RT) {
 	        	pen.drawImage(animation[hurt_RT].nextImage(), x, y, w, h + 20, null);
+	        	if(animation[hurt_RT].current == 14) hurting = false;
 	        }
     	}
     	
