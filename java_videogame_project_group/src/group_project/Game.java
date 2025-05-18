@@ -354,15 +354,30 @@ public class Game extends GameBase{
 			}
 			
 			if(boss != null) {
+				//player attacking boss
 				if(player.attacking && player.overlaps(boss)) {
 					boss.takeDamage(player.attackPower);
 				}
 				
+				//Boss attacking player
+				if(boss.overlaps(player) && boss.attacking && !player.attacking && !boss.dying) {
+					now = System.currentTimeMillis();
+					if(now - player.lastHitTime >= player.hitCooldown) {
+						boss.attackPlayer(player);
+						player.lastHitTime = now;
+						
+						if(player.current_pose == Sprite.LT) player.hurt_LT();
+						if(player.current_pose == Sprite.RT) player.hurt_RT();	
+					}
+				}
+				
+				// Boss logic
 				boss.updatePhysics(gravity);
 				for(Rect platform : tile) boss.checkPlatformCollision(platform);
 				boss.updateAI(player, currmap, S);
 				boss.updateDying();
 				
+				// Remove boss if dead
 				if(boss.readyToRemove) {
 					boss = null;
 					enemiesDefeatedByLevel[currentLevel]++;

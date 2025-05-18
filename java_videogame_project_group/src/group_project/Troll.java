@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 public class Troll extends Sprite {
     int health = 100;
+    int attackPower = 20;
     boolean onPlatform = false;
     int yVelocity = 0;
     boolean movingRight = true;
@@ -18,7 +19,7 @@ public class Troll extends Sprite {
     int hurtCooldown = 30;
     int hurtCounter = 0;
 
-    int attackCooldown = 60;
+    int attackCooldown = 90;
     int attackCounter = 0;
 
     static String[] trollPose = {"walk_rt", "attack_rt", "hurt_rt", "jump_rt", "die_rt"};
@@ -152,6 +153,12 @@ public class Troll extends Sprite {
                 }
             }
         }
+    }
+    
+    public void attackPlayer(Player player) {
+    	if(dying) return;
+    	player.takeDamage(attackPower);
+    			
     }
 
     public boolean isReadyToRemove() {
