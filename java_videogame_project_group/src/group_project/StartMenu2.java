@@ -95,4 +95,5 @@ public class StartMenu2 extends Applet implements ActionListener {
         	System.exit(0); 
         }
     }
-}
+    
+} 

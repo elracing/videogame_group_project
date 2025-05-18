@@ -313,11 +313,12 @@ public class Game extends GameBase{
 					enemy.takeDamage(player.attackPower);
 				}
 				
-				if (enemy.overlaps(player) && !player.attacking && !enemy.dying) {//if not attacking, receive damage
+				if (enemy.overlaps(player) && enemy.attacking && !player.attacking && !enemy.dying) {//if not attacking, receive damage
 					 now = System.currentTimeMillis();
 					if(now - player.lastHitTime >= player.hitCooldown) {
-						enemy.attackPlayer(player);
-						player.health -= enemy.attackPower;
+						enemy.attackPlayer(player); //calls takeDamage
+						player.lastHitTime = now;  // start cooldown
+						//player.health -= enemy.attackPower;
 						if (player.current_pose == Sprite.LT) {
 							player.hurt_LT();
 						}
@@ -545,10 +546,6 @@ public class Game extends GameBase{
 	    player.x = 0;
 	    player.y = 0;
 	    player.yVelocity = 0;
-<<<<<<< HEAD
-=======
-		}
->>>>>>> 623f3585ccf6f553d40628b4381281d0f84e0c58
 		
 }
 	
