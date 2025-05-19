@@ -20,6 +20,8 @@ import javax.imageio.ImageIO;
 
 
 public class Game extends GameBase{
+	
+	
 	public static final int S = 32;
 	//int enemiesDefeated = 0; //tracks enemies killed
 	int killThreshold = 10; //number needed to reach in order to trigger key spawn
@@ -121,6 +123,7 @@ public class Game extends GameBase{
 	Troll boss = null;
 	int gravity = 1; //used to calculate falls
 	
+	Sound soundEffect = new Sound();
 	Sound backgroundMusic = new Sound();
 	boolean musicStarted = false;
 
@@ -204,20 +207,24 @@ public class Game extends GameBase{
 				
 				if(pressing[_F] && (player.current_pose == Sprite.RT))   { //press f to attack, right side position
 					player.attack_RT();
+					//playSoundEffect(1);
 				}
 				
 				if(pressing[_F] && (player.current_pose == Sprite.LT))   {//press f to attack, left side position
 					player.attack_LT();
+					//playSoundEffect(1);
 				}
 				
 				if(pressing[SPACE] && (player.onPlatform) && (player.current_pose == Sprite.RT)) { //adds a jump by yVelocity, RT
 					player.jump_RT();
+					//playSoundEffect(3);
 					player.yVelocity = player.jump_strength;
 				    player.onPlatform = false;
 				}
 				
 				if(pressing[SPACE] && (player.onPlatform) && (player.current_pose == Sprite.LT)) { //adds a jump by yVelocity, RT
 				    player.jump_LT();
+				  //playSoundEffect(3);
 					player.yVelocity = player.jump_strength;
 				    player.onPlatform = false;
 				}
@@ -362,6 +369,7 @@ public class Game extends GameBase{
 			if(boss != null) {
 				//player attacking boss
 				if(player.attacking && player.overlaps(boss)) {
+					//playSoundEffect(1);
 					boss.takeDamage(player.attackPower);
 				}
 				
@@ -396,10 +404,12 @@ public class Game extends GameBase{
 			if (player.health <= 0) {
 				gameOver = true;
 				if (player.current_pose == Sprite.RT) {
+					//playSoundEffect(2);
 					player.die_RT();
 				}
 				
 				if (player.current_pose == Sprite.LT) {
+					//playSoundEffect(2);
 					player.die_LT();
 				}
 				
@@ -575,6 +585,11 @@ public class Game extends GameBase{
 	    }
 		
 }
+	public void playSoundEffect(int i) {
+		soundEffect.setFile(i);
+		soundEffect.play();
+	}
+	
 	
 	public void loadNextLevel() {
 		currentLevel++;
@@ -600,3 +615,10 @@ public class Game extends GameBase{
 	
 	
 }
+
+	
+	
+
+	
+		
+	
