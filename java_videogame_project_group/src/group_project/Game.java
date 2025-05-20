@@ -406,7 +406,7 @@ public class Game extends GameBase{
 				// Remove boss if dead
 				if(boss.readyToRemove) {
 					boss = null;
-					enemiesDefeatedByLevel[currentLevel
+					enemiesDefeatedByLevel[currentLevel]++;
 				if(enemiesDefeatedByLevel[currentLevel]==10){
 					gameWon=true;
 					}		//this will make sure that the gamewon screen shows up
@@ -480,7 +480,7 @@ public class Game extends GameBase{
 		
 		//Game over screen
 		
-		f (gameOver) { 
+		if (gameOver) { 
 		    pen.setColor(new Color(255, 0, 0, 200)); // semi-transparent overlay
 		    pen.fillRect(0, 0, 1920, 1080);
 	
@@ -648,6 +648,9 @@ public class Game extends GameBase{
 		gameOver=false;
 		currentLevel=0;
 		player.health=200;
+		for ( int i = 0; i < map.length; i++) {
+			enemiesDefeatedByLevel[i] = 0;
+		}
 		initialize();
 		
 	}
