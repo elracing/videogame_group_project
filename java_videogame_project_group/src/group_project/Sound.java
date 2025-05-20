@@ -18,6 +18,7 @@ public class Sound {
 		soundURL[2] = getClass().getResource("/sounds/deathSound.wav");
 		soundURL[3] = getClass().getResource("/sounds/jumpSound.wav");
 		soundURL[4] = getClass().getResource("/sounds/keySoundmp3.wav");
+		soundURL[5] = getClass().getResource("/sounds/hurtSound.wav");
 		
 	}
 	
@@ -55,5 +56,7 @@ public class Sound {
 	public void stop() {
 		clip.stop();
 	}
+	
+
 
 }

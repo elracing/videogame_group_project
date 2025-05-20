@@ -120,7 +120,7 @@ public class Game extends GameBase{
 	ArrayList<Rect> tile = new ArrayList<>(); //placeholder list for tiles, made this to make floor overlap logic
 	Troll boss = null;
 	int gravity = 1; //used to calculate falls
-	
+	Sound soundEffects = new Sound();
 	Sound backgroundMusic = new Sound();
 	boolean musicStarted = false;
 
@@ -203,7 +203,14 @@ public class Game extends GameBase{
 				
 				
 				if(pressing[_F] && (player.current_pose == Sprite.RT))   { //press f to attack, right side position
+					soundEffects.setFile(1);
+					if(!player.attacking) { //check for clip to not be playing & attack to be off to play once
+						soundEffects.play();
+					}
 					player.attack_RT();
+					
+					
+					
 				}
 				
 				if(pressing[_F] && (player.current_pose == Sprite.LT))   {//press f to attack, left side position
@@ -211,13 +218,21 @@ public class Game extends GameBase{
 				}
 				
 				if(pressing[SPACE] && (player.onPlatform) && (player.current_pose == Sprite.RT)) { //adds a jump by yVelocity, RT
+					soundEffects.setFile(3);
+					if(player.onPlatform && !player.jumping) { 
+						soundEffects.play();
+					}
 					player.jump_RT();
 					player.yVelocity = player.jump_strength;
 				    player.onPlatform = false;
 				}
 				
 				if(pressing[SPACE] && (player.onPlatform) && (player.current_pose == Sprite.LT)) { //adds a jump by yVelocity, RT
-				    player.jump_LT();
+					soundEffects.setFile(3);
+					if(player.onPlatform && !player.jumping) { 
+						soundEffects.play();
+					}
+					player.jump_LT();
 					player.yVelocity = player.jump_strength;
 				    player.onPlatform = false;
 				}
@@ -323,6 +338,8 @@ public class Game extends GameBase{
 					 now = System.currentTimeMillis();
 					if(now - player.lastHitTime >= player.hitCooldown) {
 						enemy.attackPlayer(player); //calls takeDamage
+						soundEffects.setFile(5);
+						soundEffects.play(); // hurt sound
 						player.lastHitTime = now;  // start cooldown
 						//player.health -= enemy.attackPower;
 						if (player.current_pose == Sprite.LT) {
@@ -370,6 +387,8 @@ public class Game extends GameBase{
 					now = System.currentTimeMillis();
 					if(now - player.lastHitTime >= player.hitCooldown) {
 						boss.attackPlayer(player);
+						soundEffects.setFile(5);
+						soundEffects.play(); // hurt sound
 						player.lastHitTime = now;
 						
 						if(player.current_pose == Sprite.LT) player.hurt_LT();
@@ -394,6 +413,11 @@ public class Game extends GameBase{
 			//handle player death
 			
 			if (player.health <= 0) {
+				if (!gameOver) { // play death sound once
+					soundEffects.setFile(2);
+					soundEffects.play();
+					backgroundMusic.stop();
+				}
 				gameOver = true;
 				if (player.current_pose == Sprite.RT) {
 					player.die_RT();
@@ -577,6 +601,8 @@ public class Game extends GameBase{
 }
 	
 	public void loadNextLevel() {
+		soundEffects.setFile(4);
+		soundEffects.play();
 		currentLevel++;
 	    if (currentLevel >= map.length) {
 	        currentLevel = 0; // loop back or end game
