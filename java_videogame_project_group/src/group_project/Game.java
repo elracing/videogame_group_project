@@ -1,11 +1,14 @@
 //restarted protion
 package group_project;
 
+import java.awt.Button;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +22,9 @@ import javax.imageio.ImageIO;
 
 
 
-public class Game extends GameBase{
+public class Game extends GameBase {
+	
+	
 	public static final int S = 32;
 	//int enemiesDefeated = 0; //tracks enemies killed
 	int killThreshold = 10; //number needed to reach in order to trigger key spawn
@@ -121,8 +126,12 @@ public class Game extends GameBase{
 	Troll boss = null;
 	int gravity = 1; //used to calculate falls
 	
+	Sound soundEffect = new Sound();
 	Sound backgroundMusic = new Sound();
 	boolean musicStarted = false;
+	
+	Button restartButton;
+	private MainApplet controller;
 
 	Image background = getImage("Background.png");
 	Image image2 = getImage("Tile_25.png");//A tile for level 1
@@ -204,20 +213,24 @@ public class Game extends GameBase{
 				
 				if(pressing[_F] && (player.current_pose == Sprite.RT))   { //press f to attack, right side position
 					player.attack_RT();
+					//playSoundEffect(1);
 				}
 				
 				if(pressing[_F] && (player.current_pose == Sprite.LT))   {//press f to attack, left side position
 					player.attack_LT();
+					//playSoundEffect(1);
 				}
 				
 				if(pressing[SPACE] && (player.onPlatform) && (player.current_pose == Sprite.RT)) { //adds a jump by yVelocity, RT
 					player.jump_RT();
+					//playSoundEffect(3);
 					player.yVelocity = player.jump_strength;
 				    player.onPlatform = false;
 				}
 				
 				if(pressing[SPACE] && (player.onPlatform) && (player.current_pose == Sprite.LT)) { //adds a jump by yVelocity, RT
 				    player.jump_LT();
+				  //playSoundEffect(3);
 					player.yVelocity = player.jump_strength;
 				    player.onPlatform = false;
 				}
@@ -362,6 +375,7 @@ public class Game extends GameBase{
 			if(boss != null) {
 				//player attacking boss
 				if(player.attacking && player.overlaps(boss)) {
+					//playSoundEffect(1);
 					boss.takeDamage(player.attackPower);
 				}
 				
@@ -396,10 +410,12 @@ public class Game extends GameBase{
 			if (player.health <= 0) {
 				gameOver = true;
 				if (player.current_pose == Sprite.RT) {
+					//playSoundEffect(2);
 					player.die_RT();
 				}
 				
 				if (player.current_pose == Sprite.LT) {
+					//playSoundEffect(2);
 					player.die_LT();
 				}
 				
@@ -459,6 +475,10 @@ public class Game extends GameBase{
 		    pen.setColor(Color.WHITE);
 		    pen.setFont(new Font("Arial", Font.BOLD, 100));
 		    pen.drawString("GAME OVER!", 1920 / 2 - 250, 200);
+		    
+		    restartButton.setVisible(true);
+		    
+		    
 		}
 		
 		// draw "hp"
@@ -563,6 +583,11 @@ public class Game extends GameBase{
 	        e.printStackTrace();
 	    }
 	    
+	    restartButton = new Button("Restart");
+        restartButton.addActionListener((ActionListener) this);
+        add(restartButton);
+        restartButton.setVisible(false);
+	    
 	    // Reset player position
 	    player.x = 0;
 	    player.y = 0;
@@ -575,6 +600,29 @@ public class Game extends GameBase{
 	    }
 		
 }
+	 public void actionPerformed(ActionEvent e) {
+	        if (e.getSource() == restartButton) {
+	            restartGame();
+	        }
+	    }
+	 
+	 public void restartGame() {
+		controller.showGame();
+        restartButton.setVisible(false);
+        
+    }
+	 
+	 public void playerDies() {
+	        gameOver = true;
+	        restartButton.setVisible(true);
+	    }
+	 
+	
+	public void playSoundEffect(int i) {
+		soundEffect.setFile(i);
+		soundEffect.play();
+	}
+	
 	
 	public void loadNextLevel() {
 		currentLevel++;
@@ -599,4 +647,13 @@ public class Game extends GameBase{
 	
 	
 	
+	
+	
 }
+
+	
+	
+
+	
+		
+	
