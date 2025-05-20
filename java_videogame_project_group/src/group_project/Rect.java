@@ -105,10 +105,6 @@ public class Rect {
         this.y += dy;
     }
 
-    public void resizeBy(int dw, int dh) {
-        this.w += dw;
-        this.h += dh;
-    }
     
     public boolean overlaps(Rect r) {
         return r.y <= this.y + this.h && this.y <= r.y + r.h && r.x <= this.x + this.w && this.x <= r.x + r.w;
