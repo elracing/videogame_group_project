@@ -24,6 +24,8 @@ public class Game extends GameBase{
 	//int enemiesDefeated = 0; //tracks enemies killed
 	int killThreshold = 10; //number needed to reach in order to trigger key spawn
 	boolean gameOver = false; //triggers game over 
+	boolean gameWon = false; //for the win screen
+	boolean playerDeath=false;
 	public boolean gameStarted = false;
 	
 	String[][] map = {
@@ -185,7 +187,7 @@ public class Game extends GameBase{
 		//had to modify it because it was giving me an error when the player went towards the right boundary, it froze the game
 		//this section also had to get fixed after levels were added, since each level has different chars for the tiles, had to settle with creating a boolean method
 		
-		if (!gameOver) { //disable movement if gameover
+		if (!gameOver && !gameWon) { //disable movement if gameover & gamewon
 			if (pressing[LT] && !player.attacking) {
 			    if (topTile >= 0 && bottomTile < currmap.length && leftTile >= 0 && leftTile < currmap[0].length()) {
 			        if (!isTile(currmap[topTile].charAt(leftTile)) && !isTile(currmap[bottomTile].charAt(leftTile))) {
@@ -302,7 +304,7 @@ public class Game extends GameBase{
 
 	        if (bottomY >= 0 && bottomY < currmap.length && centerX >= 0 && centerX < currmap[bottomY].length()) {
 	            char tile = currmap[bottomY].charAt(centerX);
-	            if (tile == 'G' && enemiesDefeatedByLevel[currentLevel] >= killThreshold) loadNextLevel();
+	            if (tile == 'G' && enemiesDefeatedByLevel[currentLevel] >= killThreshold && currentLevel<2) loadNextLevel();
 	        }
 
 	        //Enemy gravity, platform detection, and patrol logic
@@ -405,7 +407,10 @@ public class Game extends GameBase{
 				// Remove boss if dead
 				if(boss.readyToRemove) {
 					boss = null;
-					enemiesDefeatedByLevel[currentLevel]++;
+					enemiesDefeatedByLevel[currentLevel
+				if(enemiesDefeatedByLevel[currentLevel]==10){
+					gameWon=true;
+					}		//this will make sure that the gamewon screen shows up
 				}
 			}
 			
@@ -419,7 +424,7 @@ public class Game extends GameBase{
 					backgroundMusic.stop();
 				}
 				gameOver = true;
-				if (player.current_pose == Sprite.RT) {
+				if (player.current_pose == Sprite.RT){
 					player.die_RT();
 				}
 				
@@ -476,15 +481,31 @@ public class Game extends GameBase{
 		
 		//Game over screen
 		
-		if (gameOver) { 
-		    pen.setColor(new Color(0, 0, 0, 200)); // semi-transparent overlay
+		f (gameOver) { 
+		    pen.setColor(new Color(255, 0, 0, 200)); // semi-transparent overlay
 		    pen.fillRect(0, 0, 1920, 1080);
 	
 		    pen.setColor(Color.WHITE);
 		    pen.setFont(new Font("Arial", Font.BOLD, 100));
-		    pen.drawString("GAME OVER!", 1920 / 2 - 250, 200);
+		    pen.drawString("GAME OVER!", 300, 200);
+		    pen.setFont(new Font("Arial", Font.BOLD, 50));
+		    pen.drawString("Press R to restart", 400 , 400);
 		}
-		
+
+		//gamewon screen
+		if(gameWon) {
+			pen.setColor(new Color(0, 0, 0, 200)); // semi-transparent overlay
+		    pen.fillRect(0, 0, 1920, 1080);
+	
+		    pen.setColor(Color.WHITE);
+		    pen.setFont(new Font("Arial", Font.BOLD, 75));
+		    pen.drawString("YOU WON THE GAME!", 300 , 200);
+		    pen.setFont(new Font("Arial", Font.BOLD, 50));
+		    pen.drawString("Press R to restart", 500 , 400);
+		}
+		if((gameWon==true || gameOver==true) && pressing[_R]) {
+			restart();
+		}
 		// draw "hp"
 		
 		pen.setColor(Color.RED);
@@ -621,6 +642,15 @@ public class Game extends GameBase{
 	
 	public boolean isTile(char tile) {
 		 return tile == 'A' || tile == 'B' || tile == 'K';
+	}
+
+	public void restart() {
+		gameWon=false;
+		gameOver=false;
+		currentLevel=0;
+		player.health=200;
+		initialize();
+		
 	}
 	
 	
