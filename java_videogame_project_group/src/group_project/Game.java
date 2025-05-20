@@ -215,6 +215,10 @@ public class Game extends GameBase{
 				}
 				
 				if(pressing[_F] && (player.current_pose == Sprite.LT))   {//press f to attack, left side position
+					soundEffects.setFile(1);
+					if(!player.attacking) { //check for clip to not be playing & attack to be off to play once
+						soundEffects.play();
+					}
 					player.attack_LT();
 				}
 				
