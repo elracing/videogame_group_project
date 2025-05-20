@@ -651,8 +651,8 @@ public class Game extends GameBase{
 		for ( int i = 0; i < map.length; i++) {
 			enemiesDefeatedByLevel[i] = 0;
 		}
+		player = new Player(0, 0);
 		initialize();
-		
 	}
 	
 	
