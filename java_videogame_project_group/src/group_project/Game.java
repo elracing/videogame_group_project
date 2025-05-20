@@ -25,7 +25,6 @@ public class Game extends GameBase{
 	int killThreshold = 10; //number needed to reach in order to trigger key spawn
 	boolean gameOver = false; //triggers game over 
 	boolean gameWon = false; //for the win screen
-	boolean playerDeath=false;
 	public boolean gameStarted = false;
 	
 	String[][] map = {
