@@ -244,16 +244,6 @@ public class Game extends GameBase{
 				
 		}
 			
-			//makes it so that the player does not go out of bounds
-			if (player.x < 0) {
-			    player.x = 0;
-			}
-
-			int maxX = currmap[0].length() * S - player.w ; // max position based on the tile map width
-			if (player.x > maxX) {
-			    player.x = maxX;
-			}
-			
 			
 			
 			//more movement & gravity logic
@@ -269,10 +259,10 @@ public class Game extends GameBase{
 	        for (Rect platform : tile) {
 	            // Check downward collision 
 	            if (player.yVelocity > 0 && player.overlaps(platform)) {
-	                int playerBottom = player.y + player.h;
+	              
 	                int platformTop = platform.y;
 
-	                if (playerBottom <= platformTop + player.yVelocity) {
+	                if (bottom <= platformTop + player.yVelocity) {
 	                    player.y = platform.y - player.h;
 	                    player.yVelocity = 0;
 	                    player.onPlatform = true;
@@ -283,10 +273,10 @@ public class Game extends GameBase{
 
 	            // Check upward collision
 	            else if (player.yVelocity < 0 && player.overlaps(platform)) {
-	                int playerTop = player.y;
+	                
 	                int platformBottom = platform.y + platform.h;
 
-	                if (playerTop >= platformBottom + player.yVelocity) {
+	                if (top >= platformBottom + player.yVelocity) {
 	                    player.y = platformBottom;
 	                    player.yVelocity = 0;
 	                    break;
